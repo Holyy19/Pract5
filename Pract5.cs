@@ -1,213 +1,102 @@
-﻿using System;
+using System;
 using System.Collections;
-using System.Dynamic;
 using System.IO;
-using System.Runtime.InteropServices.ComTypes;
-using System.Collections.Generic;
-using System.Data.Common;
 
-namespace Pract5
+namespace Practica6
+
 {
+class Program
+{
+public class Student
+{
+public string Age { get; set; }
+public string FIO { get; set; }
+public string Gruppa { get; set; }
+public override string ToString()
+{
+return string.Format("ФИО:{0},Группа:{1}, Возраст:{2}", FIO, Gruppa, Age);
+}
+}
 
-    public class Olya
-    {
-        
-        public int ID { get; set; } //Сдесь хранится ID
-        public string FIO { get; set; } //Сдесь хранится ФИО
-        public string Group { get; set; } //Сдесь хранится Группа
-        public string Date { get; set; } //Сдесь хранится Дата
-        public Olya(int id, string fio, string group, string date) { ID = id; FIO = fio; Group = group; Date = date; }
-        public static List<Olya> SP = new List<Olya>();
-        public static void DeleteStudentList(int id_select)
-        {
-            Console.WriteLine("1 Задание");
-            int check = -1;
-            int find_Student_ID = -1;
-            Console.WriteLine("Формат вывода: ID\nФИО\nГруппа\nДата рождения");  // как нужно вводить
-            for (int i = 0; i < SP.Count; i++)
-            {
-                Console.WriteLine("{0}  {1}  {2}  {3} ", SP[i].ID, SP[i].FIO, SP[i].Group, SP[i].Date);
-            }
-            Console.Write("Введите id студента: ");
+static void Main(string[] args)
+{
+bool kones = true;
+ArrayList al = new ArrayList();
 
-            id_select = Convert.ToInt32(Console.ReadLine());
-            for (int i = 0; i < SP.Count; i++)
-            {
-                if (SP[i].ID == id_select)
-                {
-                    find_Student_ID = i;
-                }
-            }
-            if (find_Student_ID != -1)
-            {
-                Console.WriteLine("{0}  {1}  {2}  {3} ", SP[find_Student_ID].ID, SP[find_Student_ID].FIO, SP[find_Student_ID].Group, SP[find_Student_ID].Date);
-                Console.Write("Удалить? Для подтвеждения введите 1, для отмены 2: ");
-                check = Convert.ToInt32(Console.ReadLine());
-                if (check == 1)
-                {
-                    SP.RemoveAt(find_Student_ID);
-                    Console.WriteLine("Студент успешно удален");
-                    System.Threading.Thread.Sleep(1000);
-                    Console.Clear();
-                }
-                else
-                {
-                    Console.WriteLine("Удаление отменено");
-                    System.Threading.Thread.Sleep(1000);
-                    Console.Clear();
-                }
-            }
-            else
-            {
-                Console.WriteLine("ID Студента не найден!");
-                System.Threading.Thread.Sleep(1000);
-                Console.Clear();
+while (kones)
+{
+Console.WriteLine("Меню");
+PrintMessage();
+int a = int.Parse(Console.ReadLine());
+if (a == 1)
+{
+AddStudent(al);
+}
+else if (a == 2)
+{
+PrintStudent(al);
+}
+else if (a == 3)
+{
+RemoveStudent(al);
+}
+else kones = false;
+}
 
-            }
-        } // Метод для удаление студентов из коллекции
-        public static void EditStudentList(int id)
-        {
-            int id_select = 0;
-            int find_Student_ID = -1;
-            int Change_Student_param = 0;
-            Console.WriteLine("Формат вывода: ID|ФИО|Группа|Дата рождения");
-            for (int i = 0; i < SP.Count; i++)
-            {
-                Console.WriteLine("{0}  {1}  {2}  {3} ", SP[i].ID, SP[i].FIO, SP[i].Group, SP[i].Date);
-            }
-            Console.Write("Введите id студента: ");
-            id_select = Convert.ToInt32(Console.ReadLine());
-            for (int i = 0; i < SP.Count; i++)
-            {
-                if (SP[i].ID == id_select)
-                {
-                    find_Student_ID = i;
-                }
-            }
-            if (find_Student_ID != -1)
-            {
-                Console.WriteLine("1. ФИО");
-                Console.WriteLine("2. Группа");
-                Console.WriteLine("3. Дата рождения");
-                Console.Write("Введите номер изменяемого параметра:");
-                Change_Student_param = Convert.ToInt32(Console.ReadLine());
-                switch (Change_Student_param)
-                {
-                    case 1:
-                        Console.Write("Введите новое значение ФИО:");
-                        SP[find_Student_ID].FIO = Console.ReadLine();
-                        Console.WriteLine("Данные успешно отредактированны");
-                        Console.WriteLine("{0}  {1}  {2}  {3} ", SP[find_Student_ID].ID, SP[find_Student_ID].FIO, SP[find_Student_ID].Group, SP[find_Student_ID].Date);
-                        System.Threading.Thread.Sleep(1000);
-                        Console.Clear();
-                        break;
-                    case 2:
-                        Console.Write("Введите новое значение Группы:");
-                        SP[find_Student_ID].Group = Console.ReadLine();
-                        Console.WriteLine("Данные успешно отредактированны");
-                        Console.WriteLine("{0}  {1}  {2}  {3} ", SP[find_Student_ID].ID, SP[find_Student_ID].FIO, SP[find_Student_ID].Group, SP[find_Student_ID].Date);
-                        System.Threading.Thread.Sleep(1000);
-                        Console.Clear();
-                        break;
-                    case 3:
-                        Console.Write("Введите новое значение Даты рождения студента (в формате ДД.ММ.ГГГГ):");
-                        bool flag = false;
-                        string date = Console.ReadLine();
-                        while (flag == false)
-                        {
-                            if (CheckDate(date))
-                            {
-                                flag = true;
-                            }
-                            else
-                            {
-                                Console.WriteLine("Неверная дата, повторите ввод");
-                                Console.Write("Введите Дату рождения студента (в формате ДД.ММ.ГГГГ):");
-                                date = Console.ReadLine();
-                            }
-                        }
-                        SP[find_Student_ID].Date = date;
-                        Console.WriteLine("Данные успешно отредактированы");
-                        Console.WriteLine("{0}  {1}  {2}  {3} ", SP[find_Student_ID].ID, SP[find_Student_ID].FIO, SP[find_Student_ID].Group, SP[find_Student_ID].Date);
-                        System.Threading.Thread.Sleep(1000);
-                        Console.Clear();
-                        break;
-                }
-            }
-            else
-            {
-                Console.WriteLine("ID Студента не найден!");
-                System.Threading.Thread.Sleep(1000);
-                Console.Clear();
-            }
-        }// Метод для редактирования записей в коллекции
-        public static void AddStudentList(int id) // Метод для добавления студентов в коллекцию
-        {
-            string fio = "";
-            string group = "";
-            string date = "";
-            bool flag = false;
-            Console.Write("Введите ФИО студента:");
-            fio = Console.ReadLine();
-            Console.Write("Введите группу студента: ");
-            group = Console.ReadLine();
-            Console.Write("Введите Дату рождения студента (в формате ДД.ММ.ГГГГ): ");
-            date = Console.ReadLine();
-            while (flag == false)
-            {
-                if (CheckDate(date))
-                {
-                    flag = true;
-                }
-                else
-                {
-                    Console.WriteLine("Неверная дата, повторите ввод");
-                    Console.Write("Введите Дату рождения студента (в формате ДД.ММ.ГГГГ): ");
-                    date = Console.ReadLine();
-                }
-            }
-            SP.Add(new Olya(id, fio, group, date));
-            Console.WriteLine("Данные успешно сохранены");
-            System.Threading.Thread.Sleep(1000);
-            Console.Clear();
-        }
-        static bool CheckDate(string date) // Метод проверки корректности введенной даты
-        {
-            DateTime dt;
-            return DateTime.TryParse(date, out dt);
-        }
-        static void Main(string[] args)
-        {
-            int check = -1;
-            int command = 0;
-            int id = 0;
-            int find_Student_ID = -1;
-            int Change_Student_param = 0;
+}
 
-            while (command != 4)
-            {
 
-                Console.WriteLine("1. Добавить студента");
-                Console.WriteLine("2. Изменить данные студента");
-                Console.WriteLine("3. Удалить студента");
-                Console.WriteLine("4. Завершить работу программы");
-                Console.Write("Введите номер команды:");
-                command = Convert.ToInt32(Console.ReadLine());
-                switch (command)
-                {
-                    case 1:
-                        id++;
-                        AddStudentList(id);
-                        break;
-                    case 2:
-                        EditStudentList(id);
-                        break;
-                    case 3:
-                        DeleteStudentList(id);
-                        break;
-                }
+private static void RemoveStudent(ArrayList al)
+{
+    Console.WriteLine("Введите фамилию:");
+    string findFIO = Console.ReadLine();
+    bool fd = false;
+     Student findSt = new Student();
+      foreach (var item in al)
+{
+   Student st = (Student)item;
+    if (findFIO == st.FIO)
+{
+    findSt = st;
+    al.Remove(st);
+    fd = true;
+break;
+   }
+ }
+  if (fd) { Console.WriteLine(findSt.ToString()); }
+      else { Console.WriteLine("Студент не найден"); }
+}
 
-            }
-        }
+
+
+private static void PrintMessage()
+{
+      Console.WriteLine("Добавления студента нажмите на 1");
+      Console.WriteLine("Получения списка нажмите на 2");
+      Console.WriteLine("Удаления студента нажмите на 3");
+      Console.WriteLine("Для выхода на 9");
+}
+
+
+private static void PrintStudent(ArrayList al)
+ {
+   foreach (var item in al)
+ {
+   Student p = (Student)item;
+   Console.WriteLine(p.ToString());
+   }
+ }
+
+private static void AddStudent(ArrayList al)
+{
+string fio; string age; string grupa;
+     Console.WriteLine("ФИО студента ");
+    io = Console.ReadLine();
+    Console.WriteLine("Возраст: ");
+    age = Convert.ToString(Console.ReadLine());
+    Console.WriteLine("Группа: ");
+    grupa = Console.ReadLine();
+al.Add(new Student { Age = age, FIO = fio, Gruppa = grupa });
     }
+  }
 }
